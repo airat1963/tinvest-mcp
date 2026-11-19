@@ -69,10 +69,72 @@ TOOLS = [
             "additionalProperties": False,
         },
     },
+    {
+        "name": "find_best_ofz",
+        "description": (
+            "Ищет самый выгодный ОФЗ (максимальная доходность к погашению, YTM) "
+            "со сроком до погашения около target_years лет (±tolerance_years). "
+            "Используй для вопросов вида «найди самый выгодный ОФЗ на 2 года»."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target_years": {"type": "number", "description": "Целевой срок в годах."},
+                "tolerance_years": {"type": "number", "default": 0.5},
+            },
+            "required": ["target_years"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "compare_scenarios",
+        "description": (
+            "Считает изменение стоимости портфеля ОФЗ для нескольких сдвигов ставки "
+            "за один вызов. Возвращает таблицу «сдвиг → стоимость → изменение». "
+            "Используй для «покажи, что будет при -0.25, 0, +0.25, +0.5»."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "shifts_pp": {
+                    "type": "array", "items": {"type": "number"},
+                    "description": "Список сдвигов в п.п., например [-0.25, 0, 0.25, 0.5].",
+                },
+                "account_id": {"type": "string"},
+            },
+            "required": ["shifts_pp"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "propose_rebalance",
+        "description": (
+            "Предлагает, сколько купить/продать бумаги target_ticker, чтобы её доля "
+            "в портфеле стала target_pct процентов. Торговлю НЕ выполняет — только "
+            "возвращает действие и количество."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target_ticker": {"type": "string"},
+                "target_pct": {"type": "number"},
+                "account_id": {"type": "string"},
+            },
+            "required": ["target_ticker", "target_pct"],
+            "additionalProperties": False,
+        },
+    },
 ]
 
 HANDLERS = {
     "get_bonds_positions": "tinvest_mcp.tools:tool_get_bonds_positions",
     "get_last_close": "tinvest_mcp.tools:tool_get_last_close",
     "estimate_rate_shift": "tinvest_mcp.tools:tool_estimate_rate_shift",
+    "find_best_ofz": "tinvest_mcp.tools:tool_find_best_ofz",
+    "compare_scenarios": "tinvest_mcp.tools:tool_compare_scenarios",
+    "propose_rebalance": "tinvest_mcp.tools:tool_propose_rebalance",
 }
+# "find_best_ofz": "tinvest_mcp.tools:tool_find_best_ofz",
+# "compare_scenarios": "tinvest_mcp.tools:tool_compare_scenarios",
+# "propose_rebalance": "tinvest_mcp.tools:tool_propose_rebalance",
+
